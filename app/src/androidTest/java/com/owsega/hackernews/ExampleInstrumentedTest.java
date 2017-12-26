@@ -1,6 +1,7 @@
 package com.owsega.hackernews;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -21,6 +22,15 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.owsega.hackernews", appContext.getPackageName());
+        String packageName = appContext.getPackageName();
+        assertEquals("com.owsega.hackernews", packageName);
+
+        PackageInfo packageInfo = appContext.getPackageManager().getPackageInfo(packageName, 0);
+        int targetSdkVersion = packageInfo.applicationInfo.targetSdkVersion;
+        int minSdkVersion = packageInfo.applicationInfo.minSdkVersion;
+
+//        assertEquals(11, minSdkVersion);
+        assertEquals(25, targetSdkVersion);
+
     }
 }

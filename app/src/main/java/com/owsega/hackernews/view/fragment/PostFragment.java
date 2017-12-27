@@ -62,7 +62,7 @@ public class PostFragment extends Fragment implements OnRefreshListener {
 
         setRetainInstance(true);
 
-        dataProvider = new DataProvider();
+        dataProvider = DataProvider.getInstance();
         subscriptions = new ArrayList<>();
 
         loadTopStories();
@@ -81,7 +81,7 @@ public class PostFragment extends Fragment implements OnRefreshListener {
                     public void onError(Throwable e) {
                         hideLoadingViews();
                         Toast.makeText(getContext(),
-                                "An error occurred while loading new stories :( ",
+                                R.string.error_posts_loading,
                                 Toast.LENGTH_SHORT).show();
                         e.printStackTrace();
                     }

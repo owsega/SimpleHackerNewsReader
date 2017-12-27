@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +15,7 @@ import com.owsega.hackernews.data.DataProvider;
 import com.owsega.hackernews.data.model.Comment;
 import com.owsega.hackernews.data.model.Post;
 import com.owsega.hackernews.view.adapter.CommentAdapter;
+import com.owsega.hackernews.view.adapter.CommentAdapter.OnCommentSelectedListener;
 
 import java.util.ArrayList;
 
@@ -31,7 +31,7 @@ import static com.owsega.hackernews.view.activity.PostDetailsActivity.EXTRA_POST
 /**
  * A fragment holding the view for Comments to a Post
  */
-public class CommentFragment extends Fragment implements CommentAdapter.OnCommentSelectedListener {
+public class CommentFragment extends Fragment implements OnCommentSelectedListener {
 
     @BindView(R.id.list)
     RecyclerView commentList;
@@ -53,7 +53,7 @@ public class CommentFragment extends Fragment implements CommentAdapter.OnCommen
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
 
-        dataProvider = new DataProvider();
+        dataProvider = DataProvider.getInstance();
         subscriptions = new ArrayList<>();
         post = getArguments().getParcelable(EXTRA_POST);
         loadComments();
@@ -86,7 +86,6 @@ public class CommentFragment extends Fragment implements CommentAdapter.OnCommen
     }
 
     private void loadComments() {
-        Log.e("seyi", "loading comments");
         subscriptions.add(dataProvider.getPostComments(post.kids, 0)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(dataProvider.getScheduler())
@@ -99,14 +98,13 @@ public class CommentFragment extends Fragment implements CommentAdapter.OnCommen
                     public void onError(Throwable e) {
                         hideProgressBar();
                         Toast.makeText(getContext(),
-                                "An error occurred while loading comments :( ",
+                                R.string.error_comments_load,
                                 Toast.LENGTH_SHORT).show();
                         e.printStackTrace();
                     }
 
                     @Override
                     public void onNext(Comment comment) {
-                        Log.e("seyi", "loading comments " + comment.id);
                         hideProgressBar();
                         listAdapter.addItem(comment);
                     }

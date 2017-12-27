@@ -3,7 +3,6 @@ package com.owsega.hackernews.view.adapter;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,7 +81,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         posts.clear();
         posts.addAll(items);
         notifyDataSetChanged();
-        Log.e("seyi", "stories length " + posts.size());
     }
 
     /**
@@ -91,7 +89,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     public void addItem(Post item) {
         posts.add(item);
         notifyItemInserted(posts.size() - 1);
-        Log.e("seyi", "item inserted new length " + posts.size());
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

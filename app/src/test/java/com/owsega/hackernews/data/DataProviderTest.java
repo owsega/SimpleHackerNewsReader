@@ -84,7 +84,7 @@ public class DataProviderTest {
 
     @Test
     public void testGetScheduler() throws Exception {
-        DataProvider provider = new DataProvider();
+        DataProvider provider = DataProvider.getInstance();
         Assert.assertEquals(scheduler, dataProvider.getScheduler());
         Assert.assertNotSame(provider, dataProvider);
         Assert.assertNotSame(provider.getScheduler(), dataProvider.getScheduler());

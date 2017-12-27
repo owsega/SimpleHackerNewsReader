@@ -15,22 +15,27 @@ import rx.schedulers.Schedulers;
 
 public class DataProvider {
 
+    private static DataProvider instance;  //todo use injection not singleton
+
     private HackerNews hackerNews;
     private Scheduler subscribeScheduler;
-
-    public DataProvider() {
-        this(
-                new RestAdapter.Builder()
-                        .setEndpoint(HackerNews.BASE_URL)
-                        .setConverter(new GsonConverter(new GsonBuilder().create()))
-                        .build()
-                        .create(HackerNews.class),
-                Schedulers.io());
-    }
 
     public DataProvider(HackerNews hackerNews, Scheduler scheduler) {
         this.hackerNews = hackerNews;
         this.subscribeScheduler = scheduler;
+    }
+
+    public static DataProvider getInstance() {
+        if (instance == null) {
+            instance = new DataProvider(
+                    new RestAdapter.Builder()
+                            .setEndpoint(HackerNews.BASE_URL)
+                            .setConverter(new GsonConverter(new GsonBuilder().create()))
+                            .build()
+                            .create(HackerNews.class),
+                    Schedulers.io());
+        }
+        return instance;
     }
 
     public Scheduler getScheduler() {

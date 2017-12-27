@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Hacker News</string>
+    <string name="error_comments_load">An error occurred while loading comments :(</string>
+    <string name="error_posts_loading">An error occurred while loading new stories :(</string>
 </resources>

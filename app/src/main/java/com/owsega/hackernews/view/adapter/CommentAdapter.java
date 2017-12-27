@@ -4,7 +4,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.text.Html;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,7 +73,6 @@ public class CommentAdapter extends Adapter<CommentAdapter.ViewHolder> {
         comments.clear();
         comments.addAll(items);
         notifyDataSetChanged();
-        Log.e("seyi", "stories length " + comments.size());
     }
 
     /**
@@ -83,7 +81,6 @@ public class CommentAdapter extends Adapter<CommentAdapter.ViewHolder> {
     public void addItem(Comment item) {
         comments.add(item);
         notifyItemInserted(comments.size() - 1);
-        Log.e("seyi", "item inserted new length " + comments.size());
     }
 
     public interface OnCommentSelectedListener {

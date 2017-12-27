@@ -30,15 +30,15 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private final List<Post> posts;
     private final OnPostSelectedListener postSelectedListener;
 
-    public PostAdapter(List<Post> items, OnPostSelectedListener listener) {
-        posts = items;
+    public PostAdapter(OnPostSelectedListener listener) {
+        posts = new ArrayList<>();
         postSelectedListener = listener;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_post, parent, false);
+                .inflate(R.layout.fragment_post_item, parent, false);
         return new ViewHolder(view);
     }
 
@@ -58,7 +58,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
         holder.titleView.setText(holder.post.title);
 
-        String anchor = String.format(Locale.getDefault(), "%d. ▲ ", position);
+        String anchor = String.format(Locale.getDefault(), "%d. ▲ ", position + 1);
         holder.anchorView.setText(anchor);
 
         String subtitle = String.format(Locale.getDefault(), "%s by %s %s | %s",

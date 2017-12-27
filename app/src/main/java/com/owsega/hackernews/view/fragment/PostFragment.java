@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +18,6 @@ import com.owsega.hackernews.data.model.Post;
 import com.owsega.hackernews.view.adapter.PostAdapter;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -43,7 +41,6 @@ public class PostFragment extends Fragment implements OnRefreshListener {
     ArrayList<Subscription> subscriptions;
     private Unbinder unbinder;
     private OnPostSelectedListener postSelectedListener;
-    private List<Post> stories;
     private PostAdapter listAdapter;
 
     public PostFragment() {
@@ -66,8 +63,6 @@ public class PostFragment extends Fragment implements OnRefreshListener {
         setRetainInstance(true);
 
         dataProvider = new DataProvider();
-        stories = new ArrayList<>();
-
         subscriptions = new ArrayList<>();
 
         loadTopStories();
@@ -88,7 +83,7 @@ public class PostFragment extends Fragment implements OnRefreshListener {
                         Toast.makeText(getContext(),
                                 "An error occurred while loading new stories :( ",
                                 Toast.LENGTH_SHORT).show();
-                        Log.e("seyi", e.getMessage());
+                        e.printStackTrace();
                     }
 
                     @Override
@@ -112,8 +107,7 @@ public class PostFragment extends Fragment implements OnRefreshListener {
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
 
-        Log.e("seyi", "stories length " + stories.size());
-        listAdapter = new PostAdapter(stories, postSelectedListener);
+        listAdapter = new PostAdapter(postSelectedListener);
         listPosts.setAdapter(listAdapter);
 
         return view;
@@ -145,19 +139,7 @@ public class PostFragment extends Fragment implements OnRefreshListener {
     }
 
     /**
-     * if (savedInstanceState != null) {
-     * // Restore last state
-     * mTime = savedInstanceState.getString("time_key");
-     * } else {
-     * mTime = "" + Calendar.getInstance().getTimeInMillis();
-     * }
-     * TextView title = (TextView) view.findViewById(R.id.fragment_test);
-     * title.setText(mTime);
-     *
-     * @ Override public void onSaveInstanceState(Bundle outState) {
-     * super.onSaveInstanceState(outState);
-     * outState.putString("time_key", mTime);
-     * }
+     * callback to handle events when a post is selected
      */
     public interface OnPostSelectedListener {
         void onPostSelected(Post post);

@@ -1,6 +1,7 @@
-package com.owsega.hackernews.view.fragment;
+package com.owsega.hackernews.view.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.Adapter;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,15 +22,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link Post} and makes a call to the
+ * {@link Adapter} that can display a {@link Post} and makes a call to the
  * specified {@link OnPostSelectedListener}.
  */
-public class PostRecyclerViewAdapter extends RecyclerView.Adapter<PostRecyclerViewAdapter.ViewHolder> {
+public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     private final List<Post> posts;
     private final OnPostSelectedListener postSelectedListener;
 
-    public PostRecyclerViewAdapter(List<Post> items, OnPostSelectedListener listener) {
+    public PostAdapter(List<Post> items, OnPostSelectedListener listener) {
         posts = items;
         postSelectedListener = listener;
     }
@@ -111,7 +112,7 @@ public class PostRecyclerViewAdapter extends RecyclerView.Adapter<PostRecyclerVi
 
         @Override
         public String toString() {
-            return super.toString() + " '" + subtitleView.getText() + "'";
+            return super.toString() + post.title;
         }
     }
 }

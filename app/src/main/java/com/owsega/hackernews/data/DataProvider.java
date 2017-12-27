@@ -46,7 +46,7 @@ public class DataProvider {
         });
     }
 
-    public Observable<Post> getPostsFromIds(List<Long> storyIds) {
+    private Observable<Post> getPostsFromIds(List<Long> storyIds) {
         return Observable.from(storyIds)
                 .concatMap(new Func1<Long, Observable<Post>>() {
                     @Override

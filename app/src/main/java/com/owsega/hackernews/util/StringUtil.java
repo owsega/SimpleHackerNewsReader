@@ -4,6 +4,9 @@ import android.support.annotation.Nullable;
 
 import java.util.List;
 
+/**
+ * Utility methods for string manipulations
+ */
 public class StringUtil {
 
     /**
@@ -17,8 +20,6 @@ public class StringUtil {
 
     /**
      * appends "point" or "points" to the given int depending on whether it is singular or plural
-     *
-     * @param score
      */
     public static String singularPluralPoints(Long score) {
         if (score == 1) return score + " point";

@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.owsega.hackernews.R;
 import com.owsega.hackernews.data.DataProvider;
 import com.owsega.hackernews.data.model.Post;
+import com.owsega.hackernews.view.adapter.PostAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,7 @@ public class PostFragment extends Fragment implements OnRefreshListener {
     private Unbinder unbinder;
     private OnPostSelectedListener postSelectedListener;
     private List<Post> stories;
-    private PostRecyclerViewAdapter listAdapter;
+    private PostAdapter listAdapter;
 
     public PostFragment() {
     }
@@ -112,7 +113,7 @@ public class PostFragment extends Fragment implements OnRefreshListener {
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
 
         Log.e("seyi", "stories length " + stories.size());
-        listAdapter = new PostRecyclerViewAdapter(stories, postSelectedListener);
+        listAdapter = new PostAdapter(stories, postSelectedListener);
         listPosts.setAdapter(listAdapter);
 
         return view;

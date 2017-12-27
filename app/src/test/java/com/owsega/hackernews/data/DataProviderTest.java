@@ -12,6 +12,8 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import okhttp3.mockwebserver.Dispatcher;
@@ -21,24 +23,33 @@ import okhttp3.mockwebserver.RecordedRequest;
 import retrofit.RestAdapter;
 import retrofit.converter.GsonConverter;
 import rx.Observer;
+import rx.Scheduler;
 import rx.schedulers.Schedulers;
 
 public class DataProviderTest {
 
     private MockWebServer mockServer;
     private DataProvider dataProvider;
+    private Scheduler scheduler;
 
     @Before
     public void setUp() {
         mockServer = new MockWebServer();
-        dataProvider = new DataProvider(mockHackerNews(), Schedulers.io());
+        scheduler = Schedulers.immediate();
+        dataProvider = new DataProvider(mockHackerNews(), scheduler);
     }
 
     private HackerNews mockHackerNews() {
-        Dispatcher dispatcher = new Dispatcher() {
+        mockServer.setDispatcher(getDispatcher());
+        return getHackerNews(mockServer);
+    }
+
+    private Dispatcher getDispatcher() {
+        return new Dispatcher() {
 
             @Override
             public MockResponse dispatch(RecordedRequest request) throws InterruptedException {
+                System.out.println("requestPath " + request.getPath());
                 switch (request.getPath()) {
                     case "/topstories.json":
                         return new MockResponse().setResponseCode(200)
@@ -53,9 +64,11 @@ public class DataProviderTest {
                 return new MockResponse().setResponseCode(404);
             }
         };
-        mockServer.setDispatcher(dispatcher);
+    }
+
+    public HackerNews getHackerNews(MockWebServer server) {
         return new RestAdapter.Builder()
-                .setEndpoint(mockServer.url("/v0/").toString())
+                .setEndpoint(server.url("/").toString())
                 .setConverter(new GsonConverter(new GsonBuilder().create()))
                 .build()
                 .create(HackerNews.class);
@@ -70,7 +83,55 @@ public class DataProviderTest {
     }
 
     @Test
+    public void testGetScheduler() throws Exception {
+        DataProvider provider = new DataProvider();
+        Assert.assertEquals(scheduler, dataProvider.getScheduler());
+        Assert.assertNotSame(provider, dataProvider);
+        Assert.assertNotSame(provider.getScheduler(), dataProvider.getScheduler());
+    }
+
+    @Test
     public void testGetTopStories() throws Exception {
+        Post post = dataProvider.getTopStories().toBlocking().first();
+        Assert.assertEquals(Long.valueOf(16012968), post.id);
+        Assert.assertEquals(1, post.kids.size());
+    }
+
+    @Test
+    public void testGetCommentItem() throws Exception {
+        List<Long> ids = Arrays.asList(16013867L, 16013867L);
+        int i = 0;
+        Iterator<Comment> it = dataProvider.getPostComments(ids, 0).toBlocking().getIterator();
+        for (; it.hasNext(); i++) {
+            Comment comment = it.next();
+            Assert.assertEquals(ids.get(i), comment.id);
+            Assert.assertEquals(0, comment.depth);
+        }
+    }
+
+    @Test
+    public void testNestedComments() throws Exception {
+        List<Long> ids = Collections.singletonList(16012968L);
+        MockWebServer mockWebServer = new MockWebServer();
+        mockWebServer.enqueue(new MockResponse().setResponseCode(200)
+                .setBody("{\"by\":\"da02\",\"descendants\":1,\"id\":16012968,\"kids\":[1514351152],\"score\":106,\"time\":1514351152,\"title\":\"Symbols Found in Ice Age Caves Across Europe (2015)\",\"type\":\"story\",\"url\":\"https://digventures.com/2015/12/these-32-symbols-are-found-in-ice-age-caves-across-europe-but-what-do-they-mean/\"}"));
+        mockWebServer.enqueue(new MockResponse().setResponseCode(200)
+                .setBody("{\"by\":\"da02\",\"descendants\":0,\"id\":1514351152,\"kids\":[],\"score\":106,\"time\":1514351152,\"title\":\"Symbols Found in Ice Age Caves Across Europe (2015)\",\"type\":\"story\",\"url\":\"https://digventures.com/2015/12/these-32-symbols-are-found-in-ice-age-caves-across-europe-but-what-do-they-mean/\"}"));
+        DataProvider dataProvider = new DataProvider(getHackerNews(mockWebServer), scheduler);
+        Iterator<Comment> it = dataProvider.getPostComments(ids, 0).toBlocking().getIterator();
+        for (; it.hasNext(); ) {
+            Comment comment = it.next();
+            Assert.assertEquals(ids.get(0), comment.id);
+        }
+    }
+
+    @Test
+    public void testEmptyPost() throws Exception {
+        MockWebServer mockWebServer = new MockWebServer();
+        mockWebServer.enqueue(new MockResponse().setBody("[16012968]"));
+        mockWebServer.enqueue(new MockResponse().setResponseCode(200)
+                .setBody("{\"by\":\"da02\",\"descendants\":0,\"id\":16012968,\"kids\":[],\"score\":106,\"time\":1514351152,\"title\":\"Symbols Found in Ice Age Caves Across Europe (2015)\",\"type\":\"story\",\"url\":\"https://digventures.com/2015/12/these-32-symbols-are-found-in-ice-age-caves-across-europe-but-what-do-they-mean/\"}"));
+        DataProvider dataProvider = new DataProvider(getHackerNews(mockWebServer), scheduler);
         dataProvider.getTopStories().subscribe(new Observer<Post>() {
             @Override
             public void onCompleted() {
@@ -82,31 +143,10 @@ public class DataProviderTest {
 
             @Override
             public void onNext(Post post) {
+                Assert.assertFalse(true);
                 Assert.assertEquals(Long.valueOf(16012968L), post.id);
-                Assert.assertEquals(1, post.kids.size());
+                Assert.assertEquals(0, post.kids.size());
             }
         });
     }
-
-    @Test
-    public void testGetCommentItem() throws Exception {
-        List<Long> ids = Arrays.asList(16013867L, 16013867L);
-        dataProvider.getPostComments(ids, 0).subscribe(new Observer<Comment>() {
-            @Override
-            public void onCompleted() {
-            }
-
-            @Override
-            public void onError(Throwable e) {
-            }
-
-            @Override
-            public void onNext(Comment comment) {
-                Assert.assertEquals(Long.valueOf(16013867), comment.id);
-                Assert.assertEquals(1, comment.depth);
-            }
-        });
-    }
-
-
 }

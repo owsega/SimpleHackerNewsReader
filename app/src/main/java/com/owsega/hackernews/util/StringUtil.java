@@ -1,5 +1,6 @@
 package com.owsega.hackernews.util;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public class StringUtil {
     /**
      * appends "point" or "points" to the given int depending on whether it is singular or plural
      */
-    public static String singularPluralPoints(Long score) {
+    public static String singularPluralPoints(@NonNull Long score) {
         if (score == 1) return score + " point";
         return score + " points";
     }

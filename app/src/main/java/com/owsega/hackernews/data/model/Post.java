@@ -16,6 +16,7 @@ public class Post implements Parcelable {
             return new Post[size];
         }
     };
+
     public String by;
     public Long id;
     public Long time;
@@ -24,6 +25,10 @@ public class Post implements Parcelable {
     public Long score;
     public String title;
     public String text;
+
+    public Post(long id) {
+        this.id = id;
+    }
 
     private Post(Parcel in) {
         this.by = in.readString();
@@ -34,7 +39,6 @@ public class Post implements Parcelable {
         this.score = (Long) in.readValue(Long.class.getClassLoader());
         this.title = in.readString();
         this.text = in.readString();
-        int tmpStoryType = in.readInt();
     }
 
     @Override
@@ -54,17 +58,15 @@ public class Post implements Parcelable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Post story = (Post) o;
-
-        if (by != null ? !by.equals(story.by) : story.by != null) return false;
-        if (id != null ? !id.equals(story.id) : story.id != null) return false;
-        if (kids != null ? !kids.equals(story.kids) : story.kids != null) return false;
-        if (score != null ? !score.equals(story.score) : story.score != null) return false;
-        if (time != null ? !time.equals(story.time) : story.time != null) return false;
-        if (title != null ? !title.equals(story.title) : story.title != null) return false;
-        if (text != null ? !text.equals(story.text) : story.text != null) return false;
-        return url != null ? url.equals(story.url) : story.url == null;
+        return (by != null ? by.equals(story.by) : story.by == null) &&
+                (id != null ? id.equals(story.id) : story.id == null) &&
+                (kids != null ? kids.equals(story.kids) : story.kids == null) &&
+                (score != null ? score.equals(story.score) : story.score == null) &&
+                (time != null ? time.equals(story.time) : story.time == null) &&
+                (title != null ? title.equals(story.title) : story.title == null) &&
+                (text != null ? text.equals(story.text) : story.text == null) &&
+                (url != null ? url.equals(story.url) : story.url == null);
     }
 
     @Override

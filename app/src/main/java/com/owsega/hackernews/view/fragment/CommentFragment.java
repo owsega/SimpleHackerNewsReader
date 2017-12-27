@@ -119,6 +119,6 @@ public class CommentFragment extends Fragment implements CommentAdapter.OnCommen
 
     @Override
     public void onCommentSelected(Comment comment) {
-        //todo do nothing for now. Load children later
+        //todo Load children later
     }
 }

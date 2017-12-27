@@ -11,8 +11,7 @@ import com.owsega.hackernews.view.fragment.PostFragment.OnPostSelectedListener;
 
 import static com.owsega.hackernews.view.activity.PostDetailsActivity.EXTRA_POST;
 
-public class MainActivity extends AppCompatActivity implements
-        OnPostSelectedListener {
+public class MainActivity extends AppCompatActivity implements OnPostSelectedListener {
 
     private static final String POST_FRAGMENT = "POST_FRAGMENT";
 

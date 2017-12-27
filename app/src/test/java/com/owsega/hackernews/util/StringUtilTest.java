@@ -2,12 +2,18 @@ package com.owsega.hackernews.util;
 
 import junit.framework.Assert;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class StringUtilTest {
+
+    @Before
+    public void init() {
+        StringUtil util = new StringUtil();
+    }
 
     @Test
     public void testSingularPluralComments() throws Exception {

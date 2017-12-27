@@ -47,7 +47,8 @@ public class DataProvider {
     }
 
     private Observable<Post> getPostsFromIds(List<Long> storyIds) {
-        return Observable.from(storyIds)
+        //todo limits stuffs to 2. Remove the subList part for release
+        return Observable.from(storyIds.subList(0, 1))
                 .concatMap(new Func1<Long, Observable<Post>>() {
                     @Override
                     public Observable<Post> call(Long aLong) {

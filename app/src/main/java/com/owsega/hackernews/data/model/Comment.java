@@ -8,10 +8,7 @@ public class Comment {
     public Long time;
     public String by;
     public Long id;
-    public String type;
     public ArrayList<Long> kids;
     public ArrayList<Comment> comments;
     public int depth = 0;
-    public boolean isTopLevelComment;
-
 }

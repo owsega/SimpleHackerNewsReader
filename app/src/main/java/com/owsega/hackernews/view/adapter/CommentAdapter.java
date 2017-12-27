@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.owsega.hackernews.R;
 import com.owsega.hackernews.data.model.Comment;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -67,15 +66,6 @@ public class CommentAdapter extends Adapter<CommentAdapter.ViewHolder> {
     }
 
     /**
-     * replace items in the adapter with new ones
-     */
-    public void setItems(ArrayList<Comment> items) {
-        comments.clear();
-        comments.addAll(items);
-        notifyDataSetChanged();
-    }
-
-    /**
      * add a comment to the list
      */
     public void addItem(Comment item) {
@@ -101,11 +91,6 @@ public class CommentAdapter extends Adapter<CommentAdapter.ViewHolder> {
         public ViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
-        }
-
-        @Override
-        public String toString() {
-            return super.toString() + comment.text;
         }
     }
 }

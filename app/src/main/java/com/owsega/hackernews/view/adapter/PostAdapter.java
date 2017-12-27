@@ -1,5 +1,6 @@
 package com.owsega.hackernews.view.adapter;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.text.format.DateUtils;
@@ -29,7 +30,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private final List<Post> posts;
     private final OnPostSelectedListener postSelectedListener;
 
-    public PostAdapter(OnPostSelectedListener listener) {
+    public PostAdapter(@NonNull OnPostSelectedListener listener) {
         posts = new ArrayList<>();
         postSelectedListener = listener;
     }
@@ -47,11 +48,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (null != postSelectedListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    postSelectedListener.onPostSelected(holder.post);
-                }
+                // Notify the active callbacks interface (the activity, if the
+                // fragment is attached to one) that an item has been selected.
+                postSelectedListener.onPostSelected(holder.post);
             }
         });
 
@@ -105,11 +104,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         public ViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
-        }
-
-        @Override
-        public String toString() {
-            return super.toString() + post.title;
         }
     }
 }

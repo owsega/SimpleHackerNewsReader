@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockResponse;
@@ -22,8 +23,8 @@ import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 import retrofit.RestAdapter;
 import retrofit.converter.GsonConverter;
-import rx.Observer;
 import rx.Scheduler;
+import rx.observers.TestSubscriber;
 import rx.schedulers.Schedulers;
 
 public class DataProviderTest {
@@ -66,7 +67,7 @@ public class DataProviderTest {
         };
     }
 
-    public HackerNews getHackerNews(MockWebServer server) {
+    private HackerNews getHackerNews(MockWebServer server) {
         return new RestAdapter.Builder()
                 .setEndpoint(server.url("/").toString())
                 .setConverter(new GsonConverter(new GsonBuilder().create()))
@@ -132,21 +133,34 @@ public class DataProviderTest {
         mockWebServer.enqueue(new MockResponse().setResponseCode(200)
                 .setBody("{\"by\":\"da02\",\"descendants\":0,\"id\":16012968,\"kids\":[],\"score\":106,\"time\":1514351152,\"title\":\"Symbols Found in Ice Age Caves Across Europe (2015)\",\"type\":\"story\",\"url\":\"https://digventures.com/2015/12/these-32-symbols-are-found-in-ice-age-caves-across-europe-but-what-do-they-mean/\"}"));
         DataProvider dataProvider = new DataProvider(getHackerNews(mockWebServer), scheduler);
-        dataProvider.getTopStories().subscribe(new Observer<Post>() {
-            @Override
-            public void onCompleted() {
-            }
+        Post post = dataProvider.getTopStories().toBlocking().first();
+        Assert.assertEquals(Long.valueOf(16012968L), post.id);
+        Assert.assertEquals(0, post.kids.size());
+    }
 
-            @Override
-            public void onError(Throwable e) {
-            }
+    public void testPoorNetworkConditions() throws Exception {
+        MockWebServer mockWebServer = new MockWebServer();
+        mockWebServer.enqueue(new MockResponse().setResponseCode(404));
+        mockWebServer.enqueue(new MockResponse()
+                .setBody("[16012968, 1343344]")
+                .throttleBody(10, 1, TimeUnit.MINUTES));
+        mockWebServer.enqueue(new MockResponse().setResponseCode(404));
+        mockWebServer.enqueue(new MockResponse().setResponseCode(502));
+        DataProvider dataProvider = new DataProvider(getHackerNews(mockWebServer), scheduler);
 
-            @Override
-            public void onNext(Post post) {
-                Assert.assertFalse(true);
-                Assert.assertEquals(Long.valueOf(16012968L), post.id);
-                Assert.assertEquals(0, post.kids.size());
+        TestSubscriber<Post> subscriber = new TestSubscriber<>();
+        dataProvider.getTopStories().subscribe(subscriber);
+        Assert.assertTrue(subscriber.getOnErrorEvents().size() == 0);
+        try {
+            Iterator<Post> posts = dataProvider.getTopStories().toBlocking().getIterator();
+            for (; posts.hasNext(); ) {
+                System.out.println("dslfkjldfdf");
+                Assert.assertNotNull(posts.next());
             }
-        });
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            System.out.println(e.getClass());
+            Assert.assertTrue(e instanceof IOException);
+        }
     }
 }

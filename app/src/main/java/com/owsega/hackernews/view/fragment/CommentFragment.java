@@ -86,7 +86,8 @@ public class CommentFragment extends Fragment implements OnCommentSelectedListen
     }
 
     private void loadComments() {
-        subscriptions.add(dataProvider.getPostComments(post.kids, 0)
+        if (post.kids != null) subscriptions.add(dataProvider.getPostComments(post.kids, 0)
+                .onBackpressureBuffer()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(dataProvider.getScheduler())
                 .subscribe(new Subscriber<Comment>() {

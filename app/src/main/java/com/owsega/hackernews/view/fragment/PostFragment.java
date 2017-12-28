@@ -70,6 +70,7 @@ public class PostFragment extends Fragment implements OnRefreshListener {
 
     private void loadTopStories() {
         subscriptions.add(dataProvider.getTopStories()
+                .onBackpressureBuffer()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(dataProvider.getScheduler())
                 .subscribe(new Subscriber<Post>() {

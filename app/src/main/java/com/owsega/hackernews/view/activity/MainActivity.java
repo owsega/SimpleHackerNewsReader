@@ -37,6 +37,12 @@ public class MainActivity extends AppCompatActivity implements OnPostSelectedLis
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        getSupportFragmentManager().putFragment(outState, POST_FRAGMENT, postFragment);
+    }
+
+    @Override
     public void onPostSelected(Post post) {
         // start Details Activity for the selected post
         startActivity(new Intent(this, PostDetailsActivity.class)

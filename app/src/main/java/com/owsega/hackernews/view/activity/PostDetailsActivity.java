@@ -29,4 +29,10 @@ public class PostDetailsActivity extends AppCompatActivity {
                     .findFragmentByTag(DETAILS_FRAGMENT);
         }
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        getSupportFragmentManager().putFragment(outState, DETAILS_FRAGMENT, commentFragment);
+    }
 }

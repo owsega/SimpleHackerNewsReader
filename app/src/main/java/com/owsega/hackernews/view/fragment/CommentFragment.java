@@ -57,8 +57,6 @@ public class CommentFragment extends Fragment implements OnCommentSelectedListen
         subscriptions = new ArrayList<>();
         post = getArguments().getParcelable(EXTRA_POST);
         loadComments();
-
-        getActivity().setTitle(post.title);
     }
 
     @Override
@@ -71,6 +69,12 @@ public class CommentFragment extends Fragment implements OnCommentSelectedListen
         commentList.setAdapter(listAdapter);
 
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (post != null && post.title != null) getActivity().setTitle(post.title);
     }
 
     @Override

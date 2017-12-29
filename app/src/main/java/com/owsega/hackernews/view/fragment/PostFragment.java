@@ -64,6 +64,7 @@ public class PostFragment extends Fragment implements OnRefreshListener {
 
         dataProvider = DataProvider.getInstance();
         subscriptions = new ArrayList<>();
+        listAdapter = new PostAdapter(postSelectedListener);
 
         loadTopStories();
     }
@@ -108,7 +109,6 @@ public class PostFragment extends Fragment implements OnRefreshListener {
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
 
-        listAdapter = new PostAdapter(postSelectedListener);
         listPosts.setAdapter(listAdapter);
 
         return view;

@@ -56,6 +56,7 @@ public class CommentFragment extends Fragment implements OnCommentSelectedListen
         dataProvider = DataProvider.getInstance();
         subscriptions = new ArrayList<>();
         post = getArguments().getParcelable(EXTRA_POST);
+        listAdapter = new CommentAdapter(new ArrayList<Comment>(), this);
         loadComments();
     }
 
@@ -65,7 +66,6 @@ public class CommentFragment extends Fragment implements OnCommentSelectedListen
         View view = inflater.inflate(R.layout.fragment_post_details, container, false);
         unbinder = ButterKnife.bind(this, view);
 
-        listAdapter = new CommentAdapter(new ArrayList<Comment>(), this);
         commentList.setAdapter(listAdapter);
 
         return view;

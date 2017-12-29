@@ -115,7 +115,7 @@ public class CommentFragment extends Fragment implements OnCommentSelectedListen
     private void loadComments() {
         if (post.kids == null || post.kids.isEmpty()) {
             Toast.makeText(getContext(), R.string.no_comments, Toast.LENGTH_SHORT).show();
-            getActivity().onBackPressed();
+            ContextUtils.createSnackbar(getView(), getString(R.string.no_comments)).show();
         } else {
             subscriptions.add(dataProvider.getPostComments(post.kids, 0)
                     .onBackpressureBuffer()

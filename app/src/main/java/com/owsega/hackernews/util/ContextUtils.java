@@ -17,8 +17,11 @@ public class ContextUtils {
 
     public static Snackbar createActionSnackbar(View view, String message,
                                                 String action, OnClickListener listener) {
-        return Snackbar
-                .make(view, message, Snackbar.LENGTH_INDEFINITE)
+        return createSnackbar(view, message)
                 .setAction(action, listener);
+    }
+
+    public static Snackbar createSnackbar(View view, String message) {
+        return Snackbar.make(view, message, Snackbar.LENGTH_INDEFINITE);
     }
 }

@@ -86,7 +86,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
      * add a Post to the list
      */
     public void addItem(Post item) {
-        posts.add(item);
+        if (!posts.contains(item))
+            posts.add(item);
         notifyItemInserted(posts.size() - 1);
     }
 

@@ -2,10 +2,12 @@ package com.owsega.hackernews.view.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -14,6 +16,7 @@ import com.owsega.hackernews.R;
 import com.owsega.hackernews.data.DataProvider;
 import com.owsega.hackernews.data.model.Comment;
 import com.owsega.hackernews.data.model.Post;
+import com.owsega.hackernews.util.ContextUtils;
 import com.owsega.hackernews.view.adapter.CommentAdapter;
 import com.owsega.hackernews.view.adapter.CommentAdapter.OnCommentSelectedListener;
 
@@ -44,6 +47,7 @@ public class CommentFragment extends Fragment implements OnCommentSelectedListen
     Post post;
     private Unbinder unbinder;
     private CommentAdapter listAdapter;
+    private Snackbar snackbar;
 
     public CommentFragment() {
     }
@@ -57,7 +61,7 @@ public class CommentFragment extends Fragment implements OnCommentSelectedListen
         subscriptions = new ArrayList<>();
         post = getArguments().getParcelable(EXTRA_POST);
         listAdapter = new CommentAdapter(new ArrayList<Comment>(), this);
-        loadComments();
+        loadCommentsIfOnline();
     }
 
     @Override
@@ -89,35 +93,59 @@ public class CommentFragment extends Fragment implements OnCommentSelectedListen
         for (Subscription subscription : subscriptions) subscription.unsubscribe();
     }
 
-    private void loadComments() {
-        if (post.kids != null) subscriptions.add(dataProvider.getPostComments(post.kids, 0)
-                .onBackpressureBuffer()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(dataProvider.getScheduler())
-                .subscribe(new Subscriber<Comment>() {
-                    @Override
-                    public void onCompleted() {
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        hideProgressBar();
-                        Toast.makeText(getContext(),
-                                R.string.error_comments_load,
-                                Toast.LENGTH_SHORT).show();
-                        e.printStackTrace();
-                    }
-
-                    @Override
-                    public void onNext(Comment comment) {
-                        hideProgressBar();
-                        listAdapter.addItem(comment);
-                    }
-                }));
+    private void loadCommentsIfOnline() {
+        if (!ContextUtils.isOnline(getContext())) {
+            snackbar = ContextUtils.createActionSnackbar(getView(),
+                    getString(R.string.user_offline_msg),
+                    getString(R.string.try_again),
+                    new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            loadCommentsIfOnline();
+                        }
+                    });
+            snackbar.show();
+        } else {
+            if (snackbar != null) snackbar.dismiss();
+            hideProgressBar(false);
+            loadComments();
+        }
     }
 
-    private void hideProgressBar() {
-        progressBar.setVisibility(View.GONE);
+    private void loadComments() {
+        if (post.kids == null || post.kids.isEmpty()) {
+            Toast.makeText(getContext(), R.string.no_comments, Toast.LENGTH_SHORT).show();
+            getActivity().onBackPressed();
+        } else {
+            subscriptions.add(dataProvider.getPostComments(post.kids, 0)
+                    .onBackpressureBuffer()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(dataProvider.getScheduler())
+                    .subscribe(new Subscriber<Comment>() {
+                        @Override
+                        public void onCompleted() {
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            hideProgressBar(true);
+                            Toast.makeText(getContext(),
+                                    R.string.error_comments_load,
+                                    Toast.LENGTH_SHORT).show();
+                            e.printStackTrace();
+                        }
+
+                        @Override
+                        public void onNext(Comment comment) {
+                            hideProgressBar(true);
+                            listAdapter.addItem(comment);
+                        }
+                    }));
+        }
+    }
+
+    private void hideProgressBar(boolean shouldHide) {
+        progressBar.setVisibility(shouldHide ? View.GONE : View.VISIBLE);
     }
 
     @Override

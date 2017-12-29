@@ -2,12 +2,15 @@ package com.owsega.hackernews.view.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -15,6 +18,7 @@ import android.widget.Toast;
 import com.owsega.hackernews.R;
 import com.owsega.hackernews.data.DataProvider;
 import com.owsega.hackernews.data.model.Post;
+import com.owsega.hackernews.util.ContextUtils;
 import com.owsega.hackernews.view.adapter.PostAdapter;
 
 import java.util.ArrayList;
@@ -42,6 +46,7 @@ public class PostFragment extends Fragment implements OnRefreshListener {
     private Unbinder unbinder;
     private OnPostSelectedListener postSelectedListener;
     private PostAdapter listAdapter;
+    private Snackbar snackbar;
 
     public PostFragment() {
     }
@@ -65,40 +70,6 @@ public class PostFragment extends Fragment implements OnRefreshListener {
         dataProvider = DataProvider.getInstance();
         subscriptions = new ArrayList<>();
         listAdapter = new PostAdapter(postSelectedListener);
-
-        loadTopStories();
-    }
-
-    private void loadTopStories() {
-        subscriptions.add(dataProvider.getTopStories()
-                .onBackpressureBuffer()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(dataProvider.getScheduler())
-                .subscribe(new Subscriber<Post>() {
-                    @Override
-                    public void onCompleted() {
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        hideLoadingViews();
-                        Toast.makeText(getContext(),
-                                R.string.error_posts_loading,
-                                Toast.LENGTH_SHORT).show();
-                        e.printStackTrace();
-                    }
-
-                    @Override
-                    public void onNext(Post post) {
-                        hideLoadingViews();
-                        listAdapter.addItem(post);
-                    }
-                }));
-    }
-
-    private void hideLoadingViews() {
-        progressBar.setVisibility(View.GONE);
-        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -112,6 +83,12 @@ public class PostFragment extends Fragment implements OnRefreshListener {
         listPosts.setAdapter(listAdapter);
 
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        loadTopStoriesIfOnline();
     }
 
     @Override
@@ -132,11 +109,63 @@ public class PostFragment extends Fragment implements OnRefreshListener {
         postSelectedListener = null;
     }
 
+    private void loadTopStoriesIfOnline() {
+        Context context = getContext();
+        if (!ContextUtils.isOnline(context)) {
+            snackbar = ContextUtils.createActionSnackbar(getView(),
+                    getString(R.string.user_offline_msg),
+                    getString(R.string.try_again),
+                    new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            loadTopStoriesIfOnline();
+                        }
+                    });
+            snackbar.show();
+        } else {
+            if (snackbar != null) snackbar.dismiss();
+            hideLoadingViews(false);
+            loadTopStories();
+        }
+    }
+
+    private void loadTopStories() {
+        subscriptions.add(dataProvider.getTopStories()
+                .onBackpressureBuffer()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(dataProvider.getScheduler())
+                .subscribe(new Subscriber<Post>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        hideLoadingViews(true);
+                        Toast.makeText(getContext(),
+                                R.string.error_posts_loading,
+                                Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onNext(Post post) {
+                        hideLoadingViews(true);
+                        listAdapter.addItem(post);
+                    }
+                }));
+    }
+
+    private void hideLoadingViews(boolean shouldHide) {
+        progressBar.setVisibility(shouldHide ? View.GONE : View.VISIBLE);
+        if (shouldHide) swipeRefreshLayout.setRefreshing(false);
+    }
+
     @Override
     public void onRefresh() {
         for (Subscription subscription : subscriptions) subscription.unsubscribe();
         listAdapter.setItems(new ArrayList<Post>());
-        loadTopStories();
+        loadTopStoriesIfOnline();
     }
 
     /**

@@ -13,6 +13,9 @@ import rx.Scheduler;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
+/**
+ * Retrieves and provides data (Model) in a way the views (activity/fragments) need it.
+ */
 public class DataProvider {
 
     private static DataProvider instance;  //todo use injection not singleton

@@ -2,4 +2,7 @@
     <string name="app_name">Hacker News</string>
     <string name="error_comments_load">An error occurred while loading comments :(</string>
     <string name="error_posts_loading">An error occurred while loading new stories :(</string>
+    <string name="user_offline_msg">Unable to connect. Please check your network settings</string>
+    <string name="try_again">Try again</string>
+    <string name="no_comments">No comments to show</string>
 </resources>

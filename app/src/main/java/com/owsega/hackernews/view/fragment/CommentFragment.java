@@ -61,7 +61,6 @@ public class CommentFragment extends Fragment implements OnCommentSelectedListen
         subscriptions = new ArrayList<>();
         post = getArguments().getParcelable(EXTRA_POST);
         listAdapter = new CommentAdapter(new ArrayList<Comment>(), this);
-        loadCommentsIfOnline();
     }
 
     @Override
@@ -79,6 +78,7 @@ public class CommentFragment extends Fragment implements OnCommentSelectedListen
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (post != null && post.title != null) getActivity().setTitle(post.title);
+        loadCommentsIfOnline();
     }
 
     @Override

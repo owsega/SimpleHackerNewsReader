@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class PostTest {
 
     @Test
-    public void testPost() {
+    public void testPostParcelling() {
         Post post = new Post(1234L);
         post.id = null;
         post.title = "title";
@@ -24,15 +24,6 @@ public class PostTest {
         post.kids = new ArrayList<>();
         post.score = 89L;
         post.text = "text";
-        Post post1 = new Post(1245L);
-        Post post2 = new Post(1245L);
-
-        // test equals
-        Assert.assertFalse(post.equals(post1));
-        Assert.assertTrue(post1.equals(post2));
-        Assert.assertNotSame(post1, post2);
-        Assert.assertTrue(post1.hashCode() == post2.hashCode());
-        Assert.assertFalse(post.hashCode() == post1.hashCode());
 
         // test parcelling
         Parcel parcel = Parcel.obtain();

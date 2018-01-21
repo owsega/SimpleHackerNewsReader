@@ -11,4 +11,9 @@ public class Comment {
     public ArrayList<Long> kids;
     public ArrayList<Comment> comments;
     public int depth = 0;
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Comment && this.id.equals(((Comment) obj).id);
+    }
 }

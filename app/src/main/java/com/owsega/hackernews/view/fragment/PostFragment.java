@@ -65,11 +65,9 @@ public class PostFragment extends Fragment implements OnRefreshListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setRetainInstance(true);
-
         dataProvider = DataProvider.getInstance();
         subscriptions = new ArrayList<>();
-        listAdapter = new PostAdapter(postSelectedListener);
+        listAdapter = new PostAdapter(postSelectedListener, dataProvider.getPosts());
     }
 
     @Override

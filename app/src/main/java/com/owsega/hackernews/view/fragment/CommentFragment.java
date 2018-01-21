@@ -55,7 +55,8 @@ public class CommentFragment extends Fragment implements OnCommentSelectedListen
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+
+        // setRetainInstance(true);
 
         dataProvider = DataProvider.getInstance();
         subscriptions = new ArrayList<>();

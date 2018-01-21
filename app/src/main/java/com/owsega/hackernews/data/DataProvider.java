@@ -4,6 +4,7 @@ import com.google.gson.GsonBuilder;
 import com.owsega.hackernews.data.model.Comment;
 import com.owsega.hackernews.data.model.Post;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit.RestAdapter;
@@ -18,14 +19,15 @@ import rx.schedulers.Schedulers;
  */
 public class DataProvider {
 
-    private static DataProvider instance;  //todo use injection not singleton
-
+    private static DataProvider instance;  // todo use injection not singleton
+    private final List<Post> posts;
     private HackerNews hackerNews;
     private Scheduler subscribeScheduler;
 
     public DataProvider(HackerNews hackerNews, Scheduler scheduler) {
         this.hackerNews = hackerNews;
         this.subscribeScheduler = scheduler;
+        posts = new ArrayList<>();
     }
 
     public static DataProvider getInstance() {
@@ -96,4 +98,7 @@ public class DataProvider {
                 });
     }
 
+    public List<Post> getPosts() {
+        return posts;
+    }
 }

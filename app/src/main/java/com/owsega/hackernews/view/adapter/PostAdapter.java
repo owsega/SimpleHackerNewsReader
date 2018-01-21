@@ -1,6 +1,5 @@
 package com.owsega.hackernews.view.adapter;
 
-import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.text.format.DateUtils;
@@ -30,9 +29,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private final List<Post> posts;
     private final OnPostSelectedListener postSelectedListener;
 
-    public PostAdapter(@NonNull OnPostSelectedListener listener) {
-        posts = new ArrayList<>();
-        postSelectedListener = listener;
+    public PostAdapter(OnPostSelectedListener postSelectedListener, List<Post> posts) {
+        this.posts = posts;
+        this.postSelectedListener = postSelectedListener;
     }
 
     @Override

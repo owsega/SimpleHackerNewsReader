@@ -2,12 +2,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'jacoco'
 
 jacoco {
-    toolVersion = "0.7.9"
+//    toolVersion = "0.7.9"
+//    toolVersion = "0.8.0"
 }
 
 task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
     reports {
-        xml.enabled = true
+        xml.enabled = false
         html.enabled = true
     }
     def fileFilter = [
@@ -18,7 +19,6 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'crea
             '**/*Test*.*', 'test/**/*.*', '**/injector/**/*.*', '**/model/**/*.*', '**/mock/**/*.*',
             '**/event/**/*.*', '**/**_ViewBinding**', '**/*EventType.*', '**/**Mocked', '**ViewBinding'
     ]
-//    fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*']
     def debugTree = fileTree(dir: "$project.buildDir/intermediates/classes/debug", excludes: fileFilter)
     def mainSrc = "$project.projectDir/src/main/java"
 
@@ -49,14 +49,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
-    testOptions {
-        unitTests.all {
-            jacoco {
-                includeNoLocationClasses = true
-            }
-        }
-    }
 }
 
 dependencies {
@@ -73,7 +65,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-contrib:3.0.1'
-    implementation 'org.mockito:mockito-core:2.13.0'
+    testImplementation 'org.mockito:mockito-core:2.13.0'
 
     implementation 'io.reactivex:rxandroid:1.2.1'
     implementation "com.squareup.retrofit:retrofit:1.9.0"

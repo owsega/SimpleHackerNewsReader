@@ -60,14 +60,7 @@ public class Post implements Parcelable, Comparable<Post> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Post story = (Post) o;
-        return (by != null ? by.equals(story.by) : story.by == null) &&
-                (id != null ? id.equals(story.id) : story.id == null) &&
-                (kids != null ? kids.equals(story.kids) : story.kids == null) &&
-                (score != null ? score.equals(story.score) : story.score == null) &&
-                (time != null ? time.equals(story.time) : story.time == null) &&
-                (title != null ? title.equals(story.title) : story.title == null) &&
-                (text != null ? text.equals(story.text) : story.text == null) &&
-                (url != null ? url.equals(story.url) : story.url == null);
+        return id != null ? id.equals(story.id) : story.id == null;
     }
 
     @Override

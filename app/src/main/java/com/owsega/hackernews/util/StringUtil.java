@@ -15,8 +15,8 @@ public class StringUtil {
      */
     public static String singularPluralComments(@Nullable List items) {
         if (items == null || items.isEmpty()) return "0 comments";
-        if (items.size() == 1) return "1 comment";
-        return items.size() + " comments";
+        else if (items.size() == 1) return "1 comment";
+        else return items.size() + " comments";
     }
 
     /**
@@ -24,6 +24,6 @@ public class StringUtil {
      */
     public static String singularPluralPoints(@NonNull Long score) {
         if (score == 1) return score + " point";
-        return score + " points";
+        else return score + " points";
     }
 }

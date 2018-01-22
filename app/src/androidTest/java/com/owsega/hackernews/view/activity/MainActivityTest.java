@@ -43,13 +43,11 @@ public class MainActivityTest {
     @Test
     public void checkFragmentAfterRotate() {
         activityRule.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-//        Fragment fragment = activityRule.getActivity().postFragment;
         getInstrumentation().waitForIdleSync();
         onView(withId(R.id.list)).check(matches(isDisplayed()));
 
         activityRule.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         onView(withId(R.id.list)).check(matches(isDisplayed()));
-//        Fragment fragment1 = activityRule.getActivity().postFragment;
     }
 
     @Test

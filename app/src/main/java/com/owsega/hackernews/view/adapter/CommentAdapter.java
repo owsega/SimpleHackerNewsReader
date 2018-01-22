@@ -69,9 +69,10 @@ public class CommentAdapter extends Adapter<CommentAdapter.ViewHolder> {
      * add a comment to the list
      */
     public void addItem(Comment item) {
-        if (!comments.contains(item))
+        if (!comments.contains(item)) {
             comments.add(item);
-        notifyItemInserted(comments.size() - 1);
+            notifyItemInserted(comments.size() - 1);
+        }
     }
 
     public interface OnCommentSelectedListener {

@@ -1,5 +1,7 @@
 package com.owsega.hackernews.data;
 
+import android.support.test.runner.AndroidJUnit4;
+
 import com.google.gson.GsonBuilder;
 import com.owsega.hackernews.data.model.Comment;
 import com.owsega.hackernews.data.model.Post;
@@ -9,6 +11,7 @@ import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -27,6 +30,7 @@ import rx.Scheduler;
 import rx.observers.TestSubscriber;
 import rx.schedulers.Schedulers;
 
+@RunWith(AndroidJUnit4.class)
 public class DataProviderTest {
 
     private MockWebServer mockServer;
